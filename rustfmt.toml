@@ -1,0 +1,5 @@
+# THIS FILE IS MANAGED BY SCAFF,
+# REMOVE THIS HEADER IF YOU WANT YOUR CHANGES TO BE PRESERVED
+hard_tabs = true
+# imports_granularity = "Crate"
+# group_imports = "StdExternalCrate"

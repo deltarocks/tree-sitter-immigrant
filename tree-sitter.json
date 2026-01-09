@@ -8,7 +8,8 @@
       "file-types": [
         "schema",
         "immigrant"
-      ]
+      ],
+      "tags": "./queries/tags.scm"
     }
   ],
   "metadata": {
@@ -16,7 +17,7 @@
     "license": "MIT",
     "description": "immigrant grammar for tree-sitter",
     "links": {
-      "repository": "https://github.com/tree-sitter/tree-sitter-immigrant"
+      "repository": "https://github.com/deltarocks/tree-sitter-immigrant"
     }
   },
   "bindings": {

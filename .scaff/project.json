@@ -1,0 +1,8 @@
+{
+  "codeOwner": "Yaroslav Bolyukin <iam@lach.pw>",
+  "licenseSpdx": "MIT OR Apache-2.0",
+  "projectName": "tree-sitter-immigrant",
+  "haveCredentials": false,
+  "projectDescription": "Tree-sitter grammar for immigrant",
+  "firstRunCompleted": true
+}
