@@ -1,0 +1,8 @@
+/binding.gyp
+/bindings
+/log.html
+/src
+/test
+/node_modules
+/build
+/*.so

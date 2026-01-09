@@ -1,0 +1,25 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:nan@^2.12.1": "2.24.0",
+    "npm:tree-sitter-cli@~0.25.6": "0.25.10"
+  },
+  "npm": {
+    "nan@2.24.0": {
+      "integrity": "sha512-Vpf9qnVW1RaDkoNKFUvfxqAbtI8ncb8OJlqZ9wwpXzWPEsvsB1nvdUi6oYrHIkQ1Y/tMDnr1h4nczS0VB9Xykg=="
+    },
+    "tree-sitter-cli@0.25.10": {
+      "integrity": "sha512-KoebQguKMCIghisEOdA372TIbrUl0kdnfZ9YQIBRAeOvNSKe85XbU4LuFW7hduRUwJj0rAG7pX5wo9sZhbBF1g==",
+      "scripts": true,
+      "bin": true
+    }
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:nan@^2.12.1",
+        "npm:tree-sitter-cli@~0.25.6"
+      ]
+    }
+  }
+}
