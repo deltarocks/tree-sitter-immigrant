@@ -1,0 +1,84 @@
+= tree-sitter-immigrant
+
+++++
+<p align="center"><a href="https://github.com/CertainLach/immigrant"><img alt="immigrant logo by https://www.behance.net/fluqua" src="./docs/logo.svg" height="150"></img></a></p>
+++++
+
+A https://tree-sitter.github.io/tree-sitter/[tree-sitter] grammar for https://github.com/deltarocks/immigrant[immigrant], a database schema definition language.
+
+== Installation
+
+=== Neovim
+
+[source,lua]
+----
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+parser_config.immigrant = {
+  install_info = {
+    url = "https://github.com/deltarocks/tree-sitter-immigrant",
+    files = { "src/parser.c" },
+    branch = "main",
+  },
+  used_by = { "schema" },
+}
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "immigrant" },
+  highlight = {
+    enable = true,
+  },
+}
+----
+
+== Example
+
+[source,plaintext]
+----
+scalar user_id = sql"INTEGER" @index;
+scalar post_id = sql"INTEGER" @index;
+scalar email = sql"TEXT";
+scalar timestamp = sql"TIMESTAMP";
+scalar plaintext = sql"TEXT";
+
+enum user_group {
+    admin "superuser";
+    normal;
+};
+
+table User {
+    user_id @primary_key;
+    user_group;
+    email @unique;
+    created_at: timestamp @default(now());
+};
+
+table Post {
+    post_id @primary_key;
+    user_id ~ User;
+    title: plaintext;
+};
+----
+
+== Development
+
+=== Building
+
+[source,bash]
+----
+deno task install
+deno task build
+deno task test
+----
+
+== Links
+
+* https://github.com/deltarocks/immigrant[Immigrant] - The main immigrant project
+* https://tree-sitter.github.io/tree-sitter/[Tree-sitter] - The parser generator framework
+
+== License
+
+Licensed under either of:
+
+* Apache License, Version 2.0 (link:LICENSE-Apache-2.0[LICENSE-Apache-2.0])
+* MIT license (link:LICENSE-MIT[LICENSE-MIT])
+
+at your option.
