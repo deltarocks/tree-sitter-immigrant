@@ -1,4 +1,4 @@
-module.exports = grammar({
+export default grammar({
 	name: 'immigrant',
 	fileTypes: ['schema'],
 	scope: 'immigrant',
