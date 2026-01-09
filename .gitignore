@@ -12,3 +12,5 @@
 /*.wasm
 /*.dll
 /*.dylib
+*.o
+*.a

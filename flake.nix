@@ -45,6 +45,8 @@
               deno
               python3
               emscripten
+              cargo
+              rustc
             ];
           };
 
