@@ -1,7 +1,7 @@
 [package]
 name = "tree-sitter-immigrant"
 description = "immigrant grammar for tree-sitter"
-version = "0.0.1"
+version = "0.1.0"
 license = "MIT OR Apache-2.0"
 keywords = ["incremental", "parsing", "tree-sitter", "immigrant"]
 categories = ["parser-implementations", "parsing", "text-editors"]
