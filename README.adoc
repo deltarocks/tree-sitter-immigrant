@@ -71,8 +71,8 @@ deno task test
 
 == Links
 
-* https://github.com/deltarocks/immigrant[Immigrant] - The main immigrant project
-* https://tree-sitter.github.io/tree-sitter/[Tree-sitter] - The parser generator framework
+https://github.com/deltarocks/immigrant[Immigrant]:: The main immigrant project
+https://tree-sitter.github.io/tree-sitter/[Tree-sitter]:: The parser generator framework
 
 == License
 
