@@ -1859,7 +1859,7 @@
     },
     "comment": {
       "type": "PATTERN",
-      "value": "\\/\\/[^\\n]*\\n"
+      "value": "\\/\\/[^\\n]*"
     },
     "ws": {
       "type": "PATTERN",

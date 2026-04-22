@@ -290,7 +290,7 @@ export default grammar({
 			')',
 		),
 		comment: $ =>
-			/\/\/[^\n]*\n/,
+			/\/\/[^\n]*/,
 		ws: $ => /[ \t\n]+/,
 	},
 	conflicts: $ => [
