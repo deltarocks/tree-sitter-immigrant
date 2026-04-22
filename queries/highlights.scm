@@ -42,14 +42,23 @@
 "::"
 "="
 "!"
+"+"
+"-"
+"*"
+"/"
+"%"
 ">"
 ">="
 "<"
-"<="] @operator
+"<="
+"~~"] @operator
 
-["#"
-] @keyword
+["if" "then" "else"] @keyword
+["#"] @keyword
 
+(placeholder) @variable.builtin
+(null_literal) @constant.builtin
+(boolean_literal) @constant.builtin
 (number) @number
 (decl (["sql\"\"\""
 "sql\""

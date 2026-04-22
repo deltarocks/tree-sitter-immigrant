@@ -91,6 +91,11 @@
     }
   },
   {
+    "type": "boolean_literal",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "composite_declaration",
     "named": true,
     "fields": {
@@ -380,6 +385,10 @@
           "named": true
         },
         {
+          "type": "boolean_literal",
+          "named": true
+        },
+        {
           "type": "field_identifier",
           "named": true
         },
@@ -388,11 +397,23 @@
           "named": true
         },
         {
+          "type": "if_expression",
+          "named": true
+        },
+        {
+          "type": "null_literal",
+          "named": true
+        },
+        {
           "type": "number",
           "named": true
         },
         {
           "type": "parened_expression",
+          "named": true
+        },
+        {
+          "type": "placeholder",
           "named": true
         },
         {
@@ -515,6 +536,21 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "if_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
           "named": true
         }
       ]
@@ -1051,6 +1087,10 @@
     "named": false
   },
   {
+    "type": "%",
+    "named": false
+  },
+  {
     "type": "&&",
     "named": false
   },
@@ -1063,11 +1103,27 @@
     "named": false
   },
   {
+    "type": "*",
+    "named": false
+  },
+  {
+    "type": "+",
+    "named": false
+  },
+  {
     "type": ",",
     "named": false
   },
   {
+    "type": "-",
+    "named": false
+  },
+  {
     "type": ".",
+    "named": false
+  },
+  {
+    "type": "/",
     "named": false
   },
   {
@@ -1160,12 +1216,24 @@
     "extra": true
   },
   {
+    "type": "else",
+    "named": false
+  },
+  {
     "type": "enum",
+    "named": false
+  },
+  {
+    "type": "false",
     "named": false
   },
   {
     "type": "identifier",
     "named": true
+  },
+  {
+    "type": "if",
+    "named": false
   },
   {
     "type": "materialized",
@@ -1176,12 +1244,20 @@
     "named": false
   },
   {
+    "type": "null_literal",
+    "named": true
+  },
+  {
     "type": "number",
     "named": true
   },
   {
     "type": "opclass",
     "named": false
+  },
+  {
+    "type": "placeholder",
+    "named": true
   },
   {
     "type": "restrict",
@@ -1222,6 +1298,14 @@
   {
     "type": "test_explaination",
     "named": true
+  },
+  {
+    "type": "then",
+    "named": false
+  },
+  {
+    "type": "true",
+    "named": false
   },
   {
     "type": "unique",

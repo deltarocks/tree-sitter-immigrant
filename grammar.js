@@ -246,12 +246,22 @@ export default grammar({
 			$.function_call,
 			$.binary_expression,
 			$.unary_expression,
+			$.if_expression,
 			$.parened_expression,
+			$.placeholder,
+			$.null_literal,
+			$.boolean_literal,
 			$.field_identifier,
 			$.string,
 			$.number,
 		),
-		function_call: $ => prec.left(seq(
+		placeholder: $ => '_',
+		null_literal: $ => 'null',
+		boolean_literal: $ => choice('true', 'false'),
+		if_expression: $ => prec.right(seq(
+			'if', $.expression, 'then', $.expression, 'else', $.expression,
+		)),
+		function_call: $ => prec.left(10, seq(
 			$.function_identifier,
 			'(',
 			optional(seq(
@@ -260,15 +270,19 @@ export default grammar({
 			)),
 			')',
 		)),
-		unary_expression: $ => seq('!', $.expression),
-		// Precedence matching is wrong here
+		unary_expression: $ => prec(7, seq(choice('!', '-', '+'), $.expression)),
 		binary_expression: $ => choice(
 			prec.left(1, seq($.expression, '||', $.expression)),
 			prec.left(2, seq($.expression, '&&', $.expression)),
 			prec.left(3, seq($.expression, choice('==', '!=', '~~', "===", "!=="), $.expression)),
-			prec.left(4, seq($.expression, '::', $.type_identifier)),
-			prec.left(4, seq($.expression, '.', $.field_identifier)),
-			prec.left(5, seq($.expression, choice('<', '>', '<=', '>='), $.type_identifier)),
+			prec.left(4, seq($.expression, choice('<', '>', '<=', '>='), $.expression)),
+			prec.left(5, seq($.expression, '+', $.expression)),
+			prec.left(5, seq($.expression, '-', $.expression)),
+			prec.left(6, seq($.expression, '*', $.expression)),
+			prec.left(6, seq($.expression, '/', $.expression)),
+			prec.left(6, seq($.expression, '%', $.expression)),
+			prec.left(8, seq($.expression, '::', $.type_identifier)),
+			prec.left(8, seq($.expression, '.', $.field_identifier)),
 		),
 		parened_expression: $ => seq(
 			'(',
