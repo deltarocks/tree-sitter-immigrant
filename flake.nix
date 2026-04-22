@@ -39,6 +39,22 @@
             inherit system;
           };
 
+          packages.tree-sitter-immigrant-wasm = pkgs.stdenv.mkDerivation {
+            pname = "tree-sitter-immigrant-wasm";
+            version = "0.0.1";
+            src = ./.;
+            nativeBuildInputs = with pkgs; [ tree-sitter nodejs emscripten ];
+            buildPhase = ''
+              export HOME=$TMPDIR
+              tree-sitter build --wasm
+            '';
+            installPhase = ''
+              mkdir -p $out
+              cp tree-sitter-immigrant.wasm $out/
+              cp queries/highlights.scm $out/
+            '';
+          };
+
           shelly.shells.default = {
             packages = with pkgs; [
               pkg-config

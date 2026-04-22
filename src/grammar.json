@@ -159,6 +159,10 @@
         {
           "type": "SYMBOL",
           "name": "composite_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "mixin_declaration"
         }
       ]
     },
@@ -239,8 +243,17 @@
         {
           "type": "REPEAT1",
           "content": {
-            "type": "SYMBOL",
-            "name": "table_field"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "table_field"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "mixin_inclusion"
+              }
+            ]
           }
         },
         {
@@ -253,6 +266,75 @@
         {
           "type": "STRING",
           "value": "}"
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "mixin_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@mixin"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type_identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "table_field"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "mixin_inclusion"
+              }
+            ]
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "table_annotation"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "mixin_inclusion": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@mixin"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_identifier"
         },
         {
           "type": "STRING",

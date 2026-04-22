@@ -32,6 +32,7 @@ export default grammar({
 			$.view_declaration,
 			$.enum_declaration,
 			$.composite_declaration,
+			$.mixin_declaration,
 		),
 		scalar_declaration: $ => seq(
 			repeat($.attribute),
@@ -47,9 +48,23 @@ export default grammar({
 			'table',
 			field('name', $.type_db_name),
 			'{',
-			repeat1($.table_field),
+			repeat1(choice($.table_field, $.mixin_inclusion)),
 			repeat($.table_annotation),
 			'}',
+			';',
+		),
+		mixin_declaration: $ => seq(
+			'@mixin',
+			field('name', $.type_identifier),
+			'{',
+			repeat1(choice($.table_field, $.mixin_inclusion)),
+			repeat($.table_annotation),
+			'}',
+			';',
+		),
+		mixin_inclusion: $ => seq(
+			'@mixin',
+			$.type_identifier,
 			';',
 		),
 		decl: $ => choice(

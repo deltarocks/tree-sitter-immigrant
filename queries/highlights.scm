@@ -3,6 +3,7 @@
 "view"
 "enum"
 "struct"
+"@mixin"
 "@default"
 "@check"
 "@initialize_as"
