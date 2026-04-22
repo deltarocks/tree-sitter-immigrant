@@ -217,7 +217,7 @@ export default grammar({
 		),
 		on_update: $ => choice('set_null', 'set_default', 'restrict', 'noop', 'cascade'),
 		expr_annotation: $ => seq(
-			choice('@default', seq('@check', $.string), '@initialize_as'),
+			choice('@default', seq('@check', optional($.string)), '@initialize_as'),
 			'(',
 			$.expression,
 			')',
