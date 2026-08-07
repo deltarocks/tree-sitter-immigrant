@@ -19,6 +19,6 @@
     "generate": "deno task ts generate --js-runtime deno",
     "build": "deno task generate && deno task ts build",
     "playground": "deno task build --wasm && deno task ts playground",
-    "test": "deno task ts test"
+    "test": "deno task generate && deno task ts test"
   }
 }

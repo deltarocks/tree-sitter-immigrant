@@ -96,15 +96,40 @@
     "fields": {}
   },
   {
+    "type": "composite_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expr_annotation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "composite_declaration",
     "named": true,
     "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "type_db_name",
+            "type": "type_identifier",
             "named": true
           }
         ]
@@ -116,6 +141,10 @@
       "types": [
         {
           "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "composite_annotation",
           "named": true
         },
         {
@@ -141,11 +170,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "decl",
+          "named": true
+        },
+        {
+          "type": "field_annotation",
           "named": true
         },
         {
@@ -293,6 +326,10 @@
           "named": true
         },
         {
+          "type": "role_declaration",
+          "named": true
+        },
+        {
           "type": "scalar_declaration",
           "named": true
         },
@@ -308,15 +345,40 @@
     }
   },
   {
+    "type": "default_permissions",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "permission",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "enum_declaration",
     "named": true,
     "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "type_db_name",
+            "type": "type_identifier",
             "named": true
           }
         ]
@@ -341,12 +403,22 @@
     "type": "enum_field",
     "named": true,
     "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "variant_db_name",
+            "type": "variant_identifier",
             "named": true
           }
         ]
@@ -449,6 +521,10 @@
         },
         {
           "type": "pk_annotation",
+          "named": true
+        },
+        {
+          "type": "policy_annotation",
           "named": true
         }
       ]
@@ -592,8 +668,12 @@
     },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
+        {
+          "type": "attribute",
+          "named": true
+        },
         {
           "type": "mixin_inclusion",
           "named": true
@@ -635,6 +715,10 @@
         {
           "type": "declaration",
           "named": true
+        },
+        {
+          "type": "version_directive",
+          "named": true
         }
       ]
     }
@@ -660,9 +744,25 @@
     }
   },
   {
+    "type": "permission",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "pk_annotation",
     "named": true,
-    "fields": {},
+    "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -675,9 +775,151 @@
     }
   },
   {
+    "type": "policy_annotation",
+    "named": true,
+    "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "role": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "role_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "role_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "default_permissions",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "role_declaration",
+    "named": true,
+    "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "role_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "role_annotation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "role_grant",
+    "named": true,
+    "fields": {
+      "role": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "role_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "permission",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "role_identifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "scalar_declaration",
     "named": true,
     "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -754,7 +996,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "expr_annotation",
@@ -771,6 +1013,14 @@
         {
           "type": "pk_annotation",
           "named": true
+        },
+        {
+          "type": "policy_annotation",
+          "named": true
+        },
+        {
+          "type": "role_grant",
+          "named": true
         }
       ]
     }
@@ -779,12 +1029,22 @@
     "type": "table_declaration",
     "named": true,
     "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "type_db_name",
+            "type": "type_identifier",
             "named": true
           }
         ]
@@ -792,7 +1052,7 @@
     },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "attribute",
@@ -856,6 +1116,10 @@
         },
         {
           "type": "field_annotation",
+          "named": true
+        },
+        {
+          "type": "string",
           "named": true
         }
       ]
@@ -934,25 +1198,6 @@
     }
   },
   {
-    "type": "type_db_name",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "type_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "type_identifier",
     "named": true,
     "fields": {},
@@ -983,25 +1228,6 @@
     }
   },
   {
-    "type": "variant_db_name",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "variant_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "variant_identifier",
     "named": true,
     "fields": {},
@@ -1017,15 +1243,55 @@
     }
   },
   {
+    "type": "version_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "view_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "role_grant",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "view_declaration",
     "named": true,
     "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "type_db_name",
+            "type": "type_identifier",
             "named": true
           }
         ]
@@ -1041,6 +1307,10 @@
         },
         {
           "type": "decl",
+          "named": true
+        },
+        {
+          "type": "view_annotation",
           "named": true
         }
       ]
@@ -1171,6 +1441,10 @@
     "named": false
   },
   {
+    "type": "@!schema_version",
+    "named": false
+  },
+  {
     "type": "@check",
     "named": false
   },
@@ -1199,7 +1473,27 @@
     "named": false
   },
   {
+    "type": "@policy",
+    "named": false
+  },
+  {
     "type": "@primary_key",
+    "named": false
+  },
+  {
+    "type": "@rls",
+    "named": false
+  },
+  {
+    "type": "@rls.owner",
+    "named": false
+  },
+  {
+    "type": "@role",
+    "named": false
+  },
+  {
+    "type": "@security_definer",
     "named": false
   },
   {
@@ -1216,6 +1510,14 @@
     "extra": true
   },
   {
+    "type": "default",
+    "named": false
+  },
+  {
+    "type": "delete",
+    "named": false
+  },
+  {
     "type": "else",
     "named": false
   },
@@ -1228,11 +1530,19 @@
     "named": false
   },
   {
+    "type": "for",
+    "named": false
+  },
+  {
     "type": "identifier",
     "named": true
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "insert",
     "named": false
   },
   {
@@ -1264,7 +1574,15 @@
     "named": false
   },
   {
+    "type": "role",
+    "named": false
+  },
+  {
     "type": "scalar",
+    "named": false
+  },
+  {
+    "type": "select",
     "named": false
   },
   {
@@ -1312,6 +1630,10 @@
     "named": false
   },
   {
+    "type": "update",
+    "named": false
+  },
+  {
     "type": "using",
     "named": false
   },
@@ -1322,11 +1644,6 @@
   {
     "type": "with",
     "named": false
-  },
-  {
-    "type": "ws",
-    "named": true,
-    "extra": true
   },
   {
     "type": "{",

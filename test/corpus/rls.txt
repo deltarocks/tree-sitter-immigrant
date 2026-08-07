@@ -1,0 +1,289 @@
+==================
+role declaration
+==================
+
+role User {
+    @external;
+    default {
+        select;
+        update;
+        delete;
+    };
+};
+
+role ReadOnly "reporting_ro" {};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (role_declaration
+        (role_identifier
+          (identifier))
+        (role_annotation)
+        (role_annotation
+          (default_permissions
+            (permission)
+            (permission)
+            (permission)))))
+    (declaration
+      (role_declaration
+        (role_identifier
+          (identifier))
+        (string)))))
+
+==================
+grants and rls
+==================
+
+table Aaa {
+    user_id;
+
+    @role User {
+        insert;
+    };
+    @rls;
+    @rls.owner;
+};
+
+table Secrets {
+    data: sql"TEXT";
+    @role User {};
+};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (table_field
+          (field_identifier
+            (identifier)))
+        (table_annotation
+          (role_grant
+            (role_identifier
+              (identifier))
+            (permission)))
+        (table_annotation)
+        (table_annotation)))
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (table_field
+          (field_identifier
+            (identifier))
+          (decl
+            (decl_body_single
+              (decl_raw_single))))
+        (table_annotation
+          (role_grant
+            (role_identifier
+              (identifier))))))))
+
+==================
+policies
+==================
+
+table Aaa {
+    user_id @policy.for(User) "per-user" (_ == current_setting("app.current_user_id")::user_id);
+    @rls;
+};
+
+table Post {
+    author_id;
+    published: sql"BOOLEAN";
+    @policy.for(User) (author_id == current_setting("app.current_user_id")::user_id || published);
+    @rls;
+};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (table_field
+          (field_identifier
+            (identifier))
+          (field_annotation
+            (policy_annotation
+              (role_identifier
+                (identifier))
+              (string)
+              (expression
+                (binary_expression
+                  (expression
+                    (placeholder))
+                  (expression
+                    (binary_expression
+                      (expression
+                        (function_call
+                          (function_identifier
+                            (identifier))
+                          (expression
+                            (string))))
+                      (type_identifier
+                        (identifier)))))))))
+        (table_annotation)))
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (table_field
+          (field_identifier
+            (identifier)))
+        (table_field
+          (field_identifier
+            (identifier))
+          (decl
+            (decl_body_single
+              (decl_raw_single))))
+        (table_annotation
+          (policy_annotation
+            (role_identifier
+              (identifier))
+            (expression
+              (binary_expression
+                (expression
+                  (binary_expression
+                    (expression
+                      (field_identifier
+                        (identifier)))
+                    (expression
+                      (binary_expression
+                        (expression
+                          (function_call
+                            (function_identifier
+                              (identifier))
+                            (expression
+                              (string))))
+                        (type_identifier
+                          (identifier))))))
+                (expression
+                  (field_identifier
+                    (identifier)))))))
+        (table_annotation)))))
+
+==================
+view attributes
+==================
+
+view V {
+    @security_definer;
+    @role User {
+        select;
+    };
+} = sql"SELECT * FROM {Aaa}";
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (view_declaration
+        (type_identifier
+          (identifier))
+        (view_annotation)
+        (view_annotation
+          (role_grant
+            (role_identifier
+              (identifier))
+            (permission)))
+        (decl
+          (decl_body_single
+            (decl_raw_single)
+            (decl_table
+              (type_identifier
+                (identifier)))))))))
+
+==================
+schema version directive
+==================
+
+@!schema_version 2;
+
+scalar user_id = sql"INTEGER";
+
+---
+
+(source_file
+  (normal_schema
+    (version_directive
+      (number))
+    (declaration
+      (scalar_declaration
+        (type_identifier
+          (identifier))
+        (decl
+          (decl_body_single
+            (decl_raw_single)))))))
+
+==================
+named constraints
+==================
+
+table UserChallenge {
+    user_id;
+    kind: sql"TEXT";
+    search_key: sql"BYTEA"?;
+
+    @primary_key "uc_pk" (user_id, kind);
+    @unique(kind, search_key);
+    @index.unique.using(btree) "uc_idx" (search_key);
+};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (table_field
+          (field_identifier
+            (identifier)))
+        (table_field
+          (field_identifier
+            (identifier))
+          (decl
+            (decl_body_single
+              (decl_raw_single))))
+        (table_field
+          (field_identifier
+            (identifier))
+          (decl
+            (decl_body_single
+              (decl_raw_single))))
+        (table_annotation
+          (pk_annotation
+            (string))
+          (field_list
+            (field_identifier
+              (identifier))
+            (field_identifier
+              (identifier))))
+        (table_annotation
+          (pk_annotation)
+          (field_list
+            (field_identifier
+              (identifier))
+            (field_identifier
+              (identifier))))
+        (table_annotation
+          (pk_annotation
+            (index_attr)
+            (index_attr
+              (type_identifier
+                (identifier)))
+            (string))
+          (field_list
+            (field_identifier
+              (identifier))))))))

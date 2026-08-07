@@ -25,7 +25,11 @@ export default grammar({
 
 		test_explaination: $ => /[^\n]*\n/,
 
-		normal_schema: $ => repeat1($.declaration),
+		normal_schema: $ => seq(
+			optional($.version_directive),
+			repeat1($.declaration),
+		),
+		version_directive: $ => seq('@!schema_version', $.number, ';'),
 		declaration: $ => choice(
 			$.scalar_declaration,
 			$.table_declaration,
@@ -33,11 +37,13 @@ export default grammar({
 			$.enum_declaration,
 			$.composite_declaration,
 			$.mixin_declaration,
+			$.role_declaration,
 		),
 		scalar_declaration: $ => seq(
 			repeat($.attribute),
 			'scalar',
 			field('name', $.type_identifier),
+			optional(field('db_name', $.string)),
 			'=',
 			$.decl,
 			optional($.field_annotation),
@@ -46,18 +52,60 @@ export default grammar({
 		table_declaration: $ => seq(
 			repeat($.attribute),
 			'table',
-			field('name', $.type_db_name),
+			field('name', $.type_identifier),
+			optional(field('db_name', $.string)),
 			'{',
-			repeat1(choice($.table_field, $.mixin_inclusion)),
+			repeat(choice($.table_field, $.mixin_inclusion)),
 			repeat($.table_annotation),
 			'}',
 			';',
 		),
+		role_declaration: $ => seq(
+			repeat($.attribute),
+			'role',
+			field('name', $.role_identifier),
+			optional(field('db_name', $.string)),
+			'{',
+			repeat($.role_annotation),
+			'}',
+			';',
+		),
+		role_annotation: $ => seq(choice(
+			$.default_permissions,
+			'@external',
+		), ';'),
+		default_permissions: $ => seq(
+			'default',
+			'{',
+			repeat(seq($.permission, ';')),
+			'}',
+		),
+		permission: $ => choice('select', 'insert', 'update', 'delete'),
+		role_grant: $ => seq(
+			'@role',
+			field('role', $.role_identifier),
+			'{',
+			repeat(seq($.permission, ';')),
+			'}',
+		),
+		policy_annotation: $ => seq(
+			'@policy',
+			'.',
+			'for',
+			'(',
+			field('role', $.role_identifier),
+			')',
+			optional(field('db_name', $.string)),
+			'(',
+			$.expression,
+			')',
+		),
 		mixin_declaration: $ => seq(
+			repeat($.attribute),
 			'@mixin',
 			field('name', $.type_identifier),
 			'{',
-			repeat1(choice($.table_field, $.mixin_inclusion)),
+			repeat(choice($.table_field, $.mixin_inclusion)),
 			repeat($.table_annotation),
 			'}',
 			';',
@@ -99,15 +147,26 @@ export default grammar({
 				'.',
 				'materialized',
 			)),
-			field('name', $.type_db_name),
+			field('name', $.type_identifier),
+			optional(field('db_name', $.string)),
+			optional(seq(
+				'{',
+				repeat($.view_annotation),
+				'}',
+			)),
 			'=',
 			$.decl,
 			';',
 		),
+		view_annotation: $ => seq(choice(
+			'@security_definer',
+			$.role_grant,
+		), ';'),
 		enum_declaration: $ => seq(
 			repeat($.attribute),
 			'enum',
-			field('name', $.type_db_name),
+			field('name', $.type_identifier),
+			optional(field('db_name', $.string)),
 			'{',
 			repeat($.enum_field),
 			'}',
@@ -116,26 +175,31 @@ export default grammar({
 		composite_declaration: $ => seq(
 			repeat($.attribute),
 			'struct',
-			field('name', $.type_db_name),
+			field('name', $.type_identifier),
+			optional(field('db_name', $.string)),
 			'{',
-			repeat($.composite_field),
+			repeat(choice($.composite_field, $.composite_annotation)),
 			'}',
 			';',
 		),
+		composite_annotation: $ => seq($.expr_annotation, ';'),
 
 		enum_field: $ => seq(
-			field('name', $.variant_db_name),
+			field('name', $.variant_identifier),
+			optional(field('db_name', $.string)),
 			';'
 		),
 		composite_field: $ => seq(
 			field('name', $.field_identifier),
 				':',
 				choice($.decl, $.type_identifier),
+			optional($.field_annotation),
 			';'
 		),
 		table_field: $ => seq(
 			repeat($.attribute),
 			field('name', $.field_identifier),
+			optional($.string),
 			optional(field('type', seq(
 				':',
 				choice($.decl, $.type_identifier),
@@ -148,6 +212,7 @@ export default grammar({
 		type_identifier: $ => $.identifier,
 		field_identifier: $ => $.identifier,
 		variant_identifier: $ => $.identifier,
+		role_identifier: $ => $.identifier,
 		function_identifier: $ => $.identifier,
 		annotation_identifier: $ => $.identifier,
 		attribute_identifier: $ => $.identifier,
@@ -164,18 +229,6 @@ export default grammar({
 		string_escape: $ => '\\"',
 		number: $ => /[0-9]+/,
 
-		type_db_name: $ => seq(
-			$.type_identifier,
-			optional($.string),
-		),
-		variant_db_name: $ => seq(
-			$.variant_identifier,
-			optional($.string),
-		),
-		db_name: $ => seq(
-			$.identifier,
-			optional($.string),
-		),
 
 		attribute: $ => seq(
 			'#',
@@ -198,11 +251,17 @@ export default grammar({
 		field_annotation: $ => repeat1(choice(
 			'@external',
 			$.expr_annotation,
+			$.policy_annotation,
 			$.fk_annotation,
 			seq($.pk_annotation, optional($.field_list)),
 		)),
 		table_annotation: $ => seq(choice(
 			$.expr_annotation,
+			$.policy_annotation,
+			$.role_grant,
+			'@external',
+			'@rls.owner',
+			'@rls',
 			seq(optional($.field_list), $.fk_annotation),
 			seq($.pk_annotation, $.field_list),
 		), ';'),
@@ -222,11 +281,14 @@ export default grammar({
 			$.expression,
 			')',
 		),
-		pk_annotation: $ => seq(
-			choice('@primary_key', '@unique', seq('@index', repeat(seq(
+		pk_annotation: $ => choice(
+			seq('@primary_key', optional(field('db_name', $.string))),
+			seq('@unique', optional(field('db_name', $.string))),
+			seq('@index', repeat(seq(
 				'.',
 				$.index_attr,
-			))), '@inline'),
+			)), optional(field('db_name', $.string))),
+			'@inline',
 		),
 		index_attr: $ => choice(
 			'unique',
@@ -236,9 +298,10 @@ export default grammar({
 		),
 		field_list: $ => seq(
 			'(',
-			repeat(seq(
+			optional(seq(
 				$.field_identifier,
-				','
+				repeat(seq(',', $.field_identifier)),
+				optional(','),
 			)),
 			')',
 		),
@@ -291,10 +354,9 @@ export default grammar({
 		),
 		comment: $ =>
 			/\/\/[^\n]*/,
-		ws: $ => /[ \t\n]+/,
 	},
 	conflicts: $ => [
 		[$.function_call, $.expression],
 	],
-	extras: $=>[$.comment, $.ws],
+	extras: $=>[$.comment, /[ \t\n]+/],
 });

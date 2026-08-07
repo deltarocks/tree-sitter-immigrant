@@ -5,7 +5,6 @@
 /result
 /result-*
 /target
-/test
 
 # Built shared libraries
 /*.so

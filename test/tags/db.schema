@@ -1,0 +1,5 @@
+scalar i32 = sql"INTEGER";
+
+table User {
+	user_id: i32;
+};

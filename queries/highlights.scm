@@ -3,6 +3,8 @@
 "view"
 "enum"
 "struct"
+"role"
+"default"
 "@mixin"
 "@default"
 "@check"
@@ -12,6 +14,12 @@
 "@index"
 "@external"
 "@inline"
+"@rls"
+"@rls.owner"
+"@role"
+"@policy"
+"@security_definer"
+"@!schema_version"
 "!!!SETUP"
 "!!!TEST"
 "!!!UPDATE"
@@ -20,6 +28,8 @@
 "using"
 "with"
 "materialized"
+"for"
+(permission)
 (on_update)] @keyword.modifier
 
 [";"
@@ -67,6 +77,7 @@
 (string) @string
 (string_escape) @string.escape
 (type_identifier) @type
+(role_identifier) @type
 (field_identifier) @property
 (variant_identifier) @property
 (function_identifier) @function
