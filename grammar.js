@@ -38,6 +38,7 @@ export default grammar({
 			$.composite_declaration,
 			$.mixin_declaration,
 			$.role_declaration,
+			$.extension_declaration,
 		),
 		scalar_declaration: $ => seq(
 			repeat($.attribute),
@@ -80,6 +81,23 @@ export default grammar({
 			repeat(seq($.permission, ';')),
 			'}',
 		),
+		extension_declaration: $ => seq(
+			repeat($.attribute),
+			'extension',
+			field('name', $.extension_identifier),
+			optional(field('db_name', $.string)),
+			optional(seq(
+				'{',
+				repeat($.extension_annotation),
+				'}',
+			)),
+			';',
+		),
+		extension_annotation: $ => seq(choice(
+			seq('version', $.string),
+			'cascade',
+			'@external',
+		), ';'),
 		permission: $ => choice('select', 'insert', 'update', 'delete'),
 		role_grant: $ => seq(
 			'@role',
@@ -213,6 +231,7 @@ export default grammar({
 		field_identifier: $ => $.identifier,
 		variant_identifier: $ => $.identifier,
 		role_identifier: $ => $.identifier,
+		extension_identifier: $ => $.identifier,
 		function_identifier: $ => $.identifier,
 		annotation_identifier: $ => $.identifier,
 		attribute_identifier: $ => $.identifier,

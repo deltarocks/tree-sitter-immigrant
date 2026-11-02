@@ -4,6 +4,7 @@
 "enum"
 "struct"
 "role"
+"extension"
 "default"
 "@mixin"
 "@default"
@@ -29,6 +30,8 @@
 "with"
 "materialized"
 "for"
+"version"
+"cascade"
 (permission)
 (on_update)] @keyword.modifier
 
@@ -78,6 +81,7 @@
 (string_escape) @string.escape
 (type_identifier) @type
 (role_identifier) @type
+(extension_identifier) @type
 (field_identifier) @property
 (variant_identifier) @property
 (function_identifier) @function

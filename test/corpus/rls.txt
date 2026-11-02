@@ -34,6 +34,36 @@ role ReadOnly "reporting_ro" {};
         (string)))))
 
 ==================
+extension declaration
+==================
+
+extension pgcrypto "pgcrypto" {
+    version "1.3";
+    cascade;
+    @external;
+};
+
+extension citext;
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (extension_declaration
+        (extension_identifier
+          (identifier))
+        (string)
+        (extension_annotation
+          (string))
+        (extension_annotation)
+        (extension_annotation)))
+    (declaration
+      (extension_declaration
+        (extension_identifier
+          (identifier))))))
+
+==================
 grants and rls
 ==================
 
