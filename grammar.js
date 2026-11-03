@@ -1,32 +1,55 @@
+const testFiles = $ => seq(
+	repeat($.test_roots),
+	optional($.normal_schema),
+	repeat($.test_file),
+);
+
+const fkTarget = $ => seq(
+	'~',
+	optional(seq(
+		'.',
+		$.on_update,
+	)),
+	$.type_identifier,
+	optional($.field_list),
+);
+
 export default grammar({
 	name: 'immigrant',
 	fileTypes: ['schema'],
 	scope: 'immigrant',
 	rules: {
-		source_file: $ => choice($.test_schema, $.normal_schema),
+		source_file: $ => optional(choice($.test_schema, $.normal_schema)),
 
 		test_schema: $ => seq(
 			optional(field('setup', seq(
 				'!!!SETUP',
-				$.test_explaination,
-				$.normal_schema,
+				optional($.test_explaination),
+				testFiles($),
 			))),
 			'!!!TEST',
-			$.test_explaination,
-			field('first_example', $.normal_schema),
-			optional(field('examples', seq(
+			optional($.test_explaination),
+			field('first_example', testFiles($)),
+			repeat(field('examples', seq(
 				'!!!UPDATE',
-				$.test_explaination,
-				$.normal_schema,
+				optional($.test_explaination),
+				testFiles($),
 			))),
 			optional(field('result', $.sql_block)),
 		),
 		sql_block: $ => seq('!!!RESULT', repeat(/.+/)),
 
-		test_explaination: $ => /[^\n]*\n/,
+		test_explaination: $ => token.immediate(/[^\n]+/),
+		test_roots: $ => seq('!!!ROOTS', $.test_path),
+		test_file: $ => seq(
+			'!!!FILE',
+			field('path', $.test_path),
+			optional($.normal_schema),
+		),
+		test_path: $ => /[^\s][^\n]*/,
 
-		normal_schema: $ => seq(
-			optional($.version_directive),
+		normal_schema: $ => choice(
+			seq($.version_directive, repeat($.declaration)),
 			repeat1($.declaration),
 		),
 		version_directive: $ => seq('@!schema_version', $.number, ';'),
@@ -39,6 +62,56 @@ export default grammar({
 			$.mixin_declaration,
 			$.role_declaration,
 			$.extension_declaration,
+			$.import_declaration,
+			$.alias_declaration,
+			$.renamed_declaration,
+		),
+		import_declaration: $ => seq(
+			'import',
+			optional('@external'),
+			optional(seq(
+				'{',
+				optional(seq(
+					$.import_name,
+					repeat(seq(',', $.import_name)),
+					optional(','),
+				)),
+				'}',
+				'from',
+			)),
+			field('path', $.string),
+			';',
+		),
+		import_name: $ => seq(
+			field('name', $.type_identifier),
+			optional(seq('as', field('alias', $.type_identifier))),
+		),
+		alias_declaration: $ => seq(
+			'alias',
+			field('name', $.type_identifier),
+			'=',
+			field('target', $.type_identifier),
+			';',
+		),
+		renamed_declaration: $ => seq(
+			'@renamed',
+			field('old', $.type_identifier),
+			optional(seq('from', field('path', $.string))),
+			'to',
+			field('new', $.type_identifier),
+			';',
+		),
+		member_renamed: $ => seq(
+			'@renamed',
+			field('old', $.field_identifier),
+			'to',
+			field('new', $.field_identifier),
+		),
+		variant_renamed: $ => seq(
+			'@renamed',
+			field('old', $.variant_identifier),
+			'to',
+			field('new', $.variant_identifier),
 		),
 		scalar_declaration: $ => seq(
 			repeat($.attribute),
@@ -186,7 +259,7 @@ export default grammar({
 			field('name', $.type_identifier),
 			optional(field('db_name', $.string)),
 			'{',
-			repeat($.enum_field),
+			repeat(choice($.enum_field, seq($.variant_renamed, ';'))),
 			'}',
 			';',
 		),
@@ -200,7 +273,7 @@ export default grammar({
 			'}',
 			';',
 		),
-		composite_annotation: $ => seq($.expr_annotation, ';'),
+		composite_annotation: $ => seq(choice($.expr_annotation, $.member_renamed), ';'),
 
 		enum_field: $ => seq(
 			field('name', $.variant_identifier),
@@ -209,8 +282,12 @@ export default grammar({
 		),
 		composite_field: $ => seq(
 			field('name', $.field_identifier),
+			optional(field('db_name', $.string)),
+			optional(field('type', seq(
 				':',
 				choice($.decl, $.type_identifier),
+			))),
+			optional('?'),
 			optional($.field_annotation),
 			';'
 		),
@@ -281,17 +358,13 @@ export default grammar({
 			'@external',
 			'@rls.owner',
 			'@rls',
+			$.member_renamed,
 			seq(optional($.field_list), $.fk_annotation),
-			seq($.pk_annotation, $.field_list),
+			seq($.pk_annotation, optional($.field_list)),
 		), ';'),
-		fk_annotation: $ => seq(
-			'~',
-			optional(seq(
-				'.',
-				$.on_update,
-			)),
-			$.type_identifier,
-			optional($.field_list),
+		fk_annotation: $ => choice(
+			prec.dynamic(-1, seq(field('db_name', $.string), fkTarget($))),
+			fkTarget($),
 		),
 		on_update: $ => choice('set_null', 'set_default', 'restrict', 'noop', 'cascade'),
 		expr_annotation: $ => seq(
@@ -300,7 +373,7 @@ export default grammar({
 			$.expression,
 			')',
 		),
-		pk_annotation: $ => choice(
+		pk_annotation: $ => prec.right(choice(
 			seq('@primary_key', optional(field('db_name', $.string))),
 			seq('@unique', optional(field('db_name', $.string))),
 			seq('@index', repeat(seq(
@@ -308,7 +381,7 @@ export default grammar({
 				$.index_attr,
 			)), optional(field('db_name', $.string))),
 			'@inline',
-		),
+		)),
 		index_attr: $ => choice(
 			'unique',
 			seq('opclass', '(', $.type_identifier, ')'),
@@ -330,6 +403,7 @@ export default grammar({
 			$.unary_expression,
 			$.if_expression,
 			$.parened_expression,
+			$.tuple_expression,
 			$.placeholder,
 			$.null_literal,
 			$.boolean_literal,
@@ -371,11 +445,20 @@ export default grammar({
 			$.expression,
 			')',
 		),
+		tuple_expression: $ => seq(
+			'(',
+			optional(seq(
+				repeat1(seq($.expression, ',')),
+				optional($.expression),
+			)),
+			')',
+		),
 		comment: $ =>
 			/\/\/[^\n]*/,
 	},
 	conflicts: $ => [
 		[$.function_call, $.expression],
+		[$.fk_annotation],
 	],
 	extras: $=>[$.comment, /[ \t\n]+/],
 });

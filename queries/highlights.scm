@@ -20,11 +20,18 @@
 "@role"
 "@policy"
 "@security_definer"
+"@renamed"
+"alias"
 "@!schema_version"
 "!!!SETUP"
 "!!!TEST"
 "!!!UPDATE"
-"!!!RESULT"] @keyword
+"!!!RESULT"
+"!!!FILE"
+"!!!ROOTS"] @keyword
+["import"
+"from"
+"as"] @keyword.import
 ["opclass"
 "using"
 "with"
@@ -32,6 +39,7 @@
 "for"
 "version"
 "cascade"
+"to"
 (permission)
 (on_update)] @keyword.modifier
 
@@ -79,6 +87,9 @@
 "\"\"\""] @string.special))
 (string) @string
 (string_escape) @string.escape
+(import_declaration path: (string) @string.special.path)
+(renamed_declaration path: (string) @string.special.path)
+(test_path) @string.special.path
 (type_identifier) @type
 (role_identifier) @type
 (extension_identifier) @type

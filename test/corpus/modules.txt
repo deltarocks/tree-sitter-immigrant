@@ -1,0 +1,238 @@
+==================
+imports, aliases, renames
+==================
+
+import { User, user_id as uid, } from "./auth/users.schema";
+import @external { Invoice } from "../../billing/migrations/db.schema";
+import "./other.schema";
+alias Account = User;
+@renamed Customer from "./crm.schema" to Client;
+@renamed User to Account;
+enum Status {
+	active;
+	@renamed disabled to inactive;
+};
+struct Point {
+	lat: uid;
+	@renamed x to lat;
+};
+table Post {
+	@mixin Stamped;
+	author: uid;
+	@renamed mail to email;
+	@rls;
+};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (import_declaration
+        (import_name
+          (type_identifier
+            (identifier)))
+        (import_name
+          (type_identifier
+            (identifier))
+          (type_identifier
+            (identifier)))
+        (string)))
+    (declaration
+      (import_declaration
+        (import_name
+          (type_identifier
+            (identifier)))
+        (string)))
+    (declaration
+      (import_declaration
+        (string)))
+    (declaration
+      (alias_declaration
+        (type_identifier
+          (identifier))
+        (type_identifier
+          (identifier))))
+    (declaration
+      (renamed_declaration
+        (type_identifier
+          (identifier))
+        (string)
+        (type_identifier
+          (identifier))))
+    (declaration
+      (renamed_declaration
+        (type_identifier
+          (identifier))
+        (type_identifier
+          (identifier))))
+    (declaration
+      (enum_declaration
+        (type_identifier
+          (identifier))
+        (enum_field
+          (variant_identifier
+            (identifier)))
+        (variant_renamed
+          (variant_identifier
+            (identifier))
+          (variant_identifier
+            (identifier)))))
+    (declaration
+      (composite_declaration
+        (type_identifier
+          (identifier))
+        (composite_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier)))
+        (composite_annotation
+          (member_renamed
+            (field_identifier
+              (identifier))
+            (field_identifier
+              (identifier))))))
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (mixin_inclusion
+          (type_identifier
+            (identifier)))
+        (table_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier)))
+        (table_annotation
+          (member_renamed
+            (field_identifier
+              (identifier))
+            (field_identifier
+              (identifier))))
+        (table_annotation)))))
+
+==================
+foreign key names
+==================
+
+table T {
+	a "col_a" ~ U;
+	b: uid "b_fk" ~.cascade U;
+	c: uid @primary_key "pk" ~ U;
+	(authorization_code, audience_id) "aud_fk" ~.cascade AuthorizationCodeAudience;
+	(x, y) ~ V;
+};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (table_field
+          (field_identifier
+            (identifier))
+          (string)
+          (field_annotation
+            (fk_annotation
+              (type_identifier
+                (identifier)))))
+        (table_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier))
+          (field_annotation
+            (fk_annotation
+              (string)
+              (on_update)
+              (type_identifier
+                (identifier)))))
+        (table_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier))
+          (field_annotation
+            (pk_annotation
+              (string))
+            (fk_annotation
+              (type_identifier
+                (identifier)))))
+        (table_annotation
+          (field_list
+            (field_identifier
+              (identifier))
+            (field_identifier
+              (identifier)))
+          (fk_annotation
+            (string)
+            (on_update)
+            (type_identifier
+              (identifier))))
+        (table_annotation
+          (field_list
+            (field_identifier
+              (identifier))
+            (field_identifier
+              (identifier)))
+          (fk_annotation
+            (type_identifier
+              (identifier))))))))
+
+==================
+multi-file tests
+==================
+
+!!!TEST
+!!!ROOTS @main/db.schema @logseq/db.schema
+!!!FILE @main/db.schema
+import { Page } from "@logseq/db.schema";
+!!!FILE @logseq/db.schema
+scalar page_id = sql"INTEGER";
+!!!UPDATE moved
+scalar page_id = sql"INTEGER";
+!!!FILE crm.schema
+!!!RESULT
+
+---
+
+(source_file
+  (test_schema
+    (test_roots
+      (test_path))
+    (test_file
+      (test_path)
+      (normal_schema
+        (declaration
+          (import_declaration
+            (import_name
+              (type_identifier
+                (identifier)))
+            (string)))))
+    (test_file
+      (test_path)
+      (normal_schema
+        (declaration
+          (scalar_declaration
+            (type_identifier
+              (identifier))
+            (decl
+              (decl_body_single
+                (decl_raw_single)))))))
+    (test_explaination)
+    (normal_schema
+      (declaration
+        (scalar_declaration
+          (type_identifier
+            (identifier))
+          (decl
+            (decl_body_single
+              (decl_raw_single))))))
+    (test_file
+      (test_path))
+    (sql_block)))

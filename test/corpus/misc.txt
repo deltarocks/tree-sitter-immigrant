@@ -1,0 +1,170 @@
+==================
+struct fields
+==================
+
+struct a "b" {
+	foo;
+	bar "baz": myint;
+	opt: myint?;
+	test @check (_ != 123);
+};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (composite_declaration
+        (type_identifier
+          (identifier))
+        (string)
+        (composite_field
+          (field_identifier
+            (identifier)))
+        (composite_field
+          (field_identifier
+            (identifier))
+          (string)
+          (type_identifier
+            (identifier)))
+        (composite_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier)))
+        (composite_field
+          (field_identifier
+            (identifier))
+          (field_annotation
+            (expr_annotation
+              (expression
+                (binary_expression
+                  (expression
+                    (placeholder))
+                  (expression
+                    (number)))))))))))
+
+==================
+tuple expressions
+==================
+
+table T {
+	a: s @initialize_as ((a.field, 2,)::s);
+	b: s @default (());
+	c: s @default ((1,));
+	d: s @default ((1, 2));
+};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (table_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier))
+          (field_annotation
+            (expr_annotation
+              (expression
+                (binary_expression
+                  (expression
+                    (tuple_expression
+                      (expression
+                        (binary_expression
+                          (expression
+                            (field_identifier
+                              (identifier)))
+                          (field_identifier
+                            (identifier))))
+                      (expression
+                        (number))))
+                  (type_identifier
+                    (identifier)))))))
+        (table_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier))
+          (field_annotation
+            (expr_annotation
+              (expression
+                (tuple_expression)))))
+        (table_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier))
+          (field_annotation
+            (expr_annotation
+              (expression
+                (tuple_expression
+                  (expression
+                    (number)))))))
+        (table_field
+          (field_identifier
+            (identifier))
+          (type_identifier
+            (identifier))
+          (field_annotation
+            (expr_annotation
+              (expression
+                (tuple_expression
+                  (expression
+                    (number))
+                  (expression
+                    (number)))))))))))
+
+==================
+named constraint without columns
+==================
+
+table T {
+	id;
+	@primary_key "hui";
+};
+
+---
+
+(source_file
+  (normal_schema
+    (declaration
+      (table_declaration
+        (type_identifier
+          (identifier))
+        (table_field
+          (field_identifier
+            (identifier)))
+        (table_annotation
+          (pk_annotation
+            (string)))))))
+
+==================
+version directive only
+==================
+
+@!schema_version 2;
+
+---
+
+(source_file
+  (normal_schema
+    (version_directive
+      (number))))
+
+==================
+comments only
+==================
+
+// Doc comment
+/// Ignored by parser
+
+---
+
+(source_file
+  (comment)
+  (comment))

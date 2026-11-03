@@ -1,5 +1,31 @@
 [
   {
+    "type": "alias_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "attribute",
     "named": true,
     "fields": {},
@@ -106,6 +132,10 @@
         {
           "type": "expr_annotation",
           "named": true
+        },
+        {
+          "type": "member_renamed",
+          "named": true
         }
       ]
     }
@@ -158,6 +188,16 @@
     "type": "composite_field",
     "named": true,
     "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -167,22 +207,32 @@
             "named": true
           }
         ]
+      },
+      "type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ":",
+            "named": false
+          },
+          {
+            "type": "decl",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
-          "type": "decl",
-          "named": true
-        },
-        {
           "type": "field_annotation",
-          "named": true
-        },
-        {
-          "type": "type_identifier",
           "named": true
         }
       ]
@@ -314,6 +364,10 @@
       "required": true,
       "types": [
         {
+          "type": "alias_declaration",
+          "named": true
+        },
+        {
           "type": "composite_declaration",
           "named": true
         },
@@ -326,7 +380,15 @@
           "named": true
         },
         {
+          "type": "import_declaration",
+          "named": true
+        },
+        {
           "type": "mixin_declaration",
+          "named": true
+        },
+        {
+          "type": "renamed_declaration",
           "named": true
         },
         {
@@ -398,6 +460,10 @@
         },
         {
           "type": "enum_field",
+          "named": true
+        },
+        {
+          "type": "variant_renamed",
           "named": true
         }
       ]
@@ -494,6 +560,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tuple_expression",
           "named": true
         },
         {
@@ -637,7 +707,18 @@
   {
     "type": "fk_annotation",
     "named": true,
-    "fields": {},
+    "fields": {
+      "db_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -707,6 +788,58 @@
     }
   },
   {
+    "type": "import_declaration",
+    "named": true,
+    "fields": {
+      "path": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "import_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import_name",
+    "named": true,
+    "fields": {
+      "alias": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "index_attr",
     "named": true,
     "fields": {},
@@ -723,6 +856,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "member_renamed",
+    "named": true,
+    "fields": {
+      "new": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_identifier",
+            "named": true
+          }
+        ]
+      },
+      "old": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -885,6 +1044,42 @@
     }
   },
   {
+    "type": "renamed_declaration",
+    "named": true,
+    "fields": {
+      "new": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "old": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "path": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "role_annotation",
     "named": true,
     "fields": {},
@@ -1031,7 +1226,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "normal_schema",
@@ -1082,6 +1277,10 @@
         },
         {
           "type": "fk_annotation",
+          "named": true
+        },
+        {
+          "type": "member_renamed",
           "named": true
         },
         {
@@ -1200,6 +1399,47 @@
     }
   },
   {
+    "type": "test_file",
+    "named": true,
+    "fields": {
+      "path": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "test_path",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "normal_schema",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "test_roots",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "test_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "test_schema",
     "named": true,
     "fields": {
@@ -1218,15 +1458,31 @@
           {
             "type": "test_explaination",
             "named": true
+          },
+          {
+            "type": "test_file",
+            "named": true
+          },
+          {
+            "type": "test_roots",
+            "named": true
           }
         ]
       },
       "first_example": {
-        "multiple": false,
-        "required": true,
+        "multiple": true,
+        "required": false,
         "types": [
           {
             "type": "normal_schema",
+            "named": true
+          },
+          {
+            "type": "test_file",
+            "named": true
+          },
+          {
+            "type": "test_roots",
             "named": true
           }
         ]
@@ -1256,16 +1512,39 @@
           {
             "type": "test_explaination",
             "named": true
+          },
+          {
+            "type": "test_file",
+            "named": true
+          },
+          {
+            "type": "test_roots",
+            "named": true
           }
         ]
       }
     },
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "test_explaination",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tuple_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "expression",
           "named": true
         }
       ]
@@ -1314,6 +1593,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "variant_renamed",
+    "named": true,
+    "fields": {
+      "new": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "variant_identifier",
+            "named": true
+          }
+        ]
+      },
+      "old": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "variant_identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1395,7 +1700,15 @@
     "named": false
   },
   {
+    "type": "!!!FILE",
+    "named": false
+  },
+  {
     "type": "!!!RESULT",
+    "named": false
+  },
+  {
+    "type": "!!!ROOTS",
     "named": false
   },
   {
@@ -1555,6 +1868,10 @@
     "named": false
   },
   {
+    "type": "@renamed",
+    "named": false
+  },
+  {
     "type": "@rls",
     "named": false
   },
@@ -1572,6 +1889,14 @@
   },
   {
     "type": "@unique",
+    "named": false
+  },
+  {
+    "type": "alias",
+    "named": false
+  },
+  {
+    "type": "as",
     "named": false
   },
   {
@@ -1612,11 +1937,19 @@
     "named": false
   },
   {
+    "type": "from",
+    "named": false
+  },
+  {
     "type": "identifier",
     "named": true
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "import",
     "named": false
   },
   {
@@ -1696,7 +2029,15 @@
     "named": true
   },
   {
+    "type": "test_path",
+    "named": true
+  },
+  {
     "type": "then",
+    "named": false
+  },
+  {
+    "type": "to",
     "named": false
   },
   {
